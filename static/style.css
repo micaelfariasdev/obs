@@ -1,0 +1,349 @@
+body {
+    background-color: transparent;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    font-weight: 700;
+    /* Texto mais "grosso" */
+    color: white;
+    overflow: hidden;
+}
+
+.hidden {
+    display: none !important;
+    opacity: 0;
+}
+
+#scoreboard-container {
+    display: flex;
+    position: absolute;
+    flex-direction: column;
+    top: 20px;
+    left: 20px;
+    z-index: 2;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    transition: all 0.5s ease-in-out;
+
+}
+
+.in-score {
+    animation: in-score 1s ease-out forwards;
+}
+
+.out-score {
+    animation: out-score 1s ease-out forwards;
+}
+
+@keyframes in-score {
+    0% {
+        opacity: 0;
+        /* Começa invisível para suavizar a entrada */
+        max-width: 0px;
+        max-height: 10px;
+
+    }
+
+    30% {
+        /* Ajuste para começar a mostrar a opacidade antes da largura */
+        opacity: 1;
+        max-height: 10px;
+    }
+
+    50% {
+        opacity: 1;
+        max-width: 150px;
+        max-height: 10px;
+        /* <--- Mantenha a altura zero para o efeito de deslizar primeiro */
+    }
+
+    100% {
+        opacity: 1;
+        max-width: 150px;
+        max-height: 200px;
+    }
+}
+
+@keyframes out-score {
+    0% {
+        opacity: 1;
+        max-width: 150px;
+        max-height: 200px;
+    }
+
+    50% {
+        opacity: 1;
+        max-width: 150px;
+        max-height: 10px;
+        /* <--- Reduz a altura primeiro */
+    }
+
+    70% {
+        /* Reduz a opacidade por último ou junto com a largura */
+        opacity: 1;
+        max-height: 10px;
+    }
+
+    100% {
+        opacity: 0;
+        /* Começa invisível para suavizar a entrada */
+        max-width: 0px;
+        max-height: 10px;
+    }
+}
+
+
+.color-teamA {
+    width: 10px;
+    background-color: turquoise;
+}
+.color-teamB {
+    width: 10px;
+    background-color: turquoise;
+}
+
+.team-container {
+    display: flex;
+    flex-direction: row;
+    height: 50px;
+    transition: all 0.5s ease-in-out;
+
+    /* Altura da barra */
+}
+
+.logo,
+.team,
+.score {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 0 15px;
+}
+
+.logo {
+    background: white;
+    padding: 0 10px;
+}
+
+.logo img {
+    height: 36px;
+    /* Um pouco menor que a barra de 50px */
+    width: 36px;
+    object-fit: contain;
+    /* Garante que o logo não distorça */
+}
+
+.team {
+    font-size: 26px;
+    text-transform: uppercase;
+    background-color: rgb(52, 127, 212);
+    padding: 0 10px;
+    width: -webkit-fill-available;
+    overflow: hidden;
+    transition: all 0.5s ease-in-out;
+}
+
+.name {
+    overflow: hidden;
+    display: block;
+    transition: all 0.5s ease-in-out;
+}
+
+.team-name-out {
+    animation: team-name-out 0.5s ease-in-out forwards;
+}
+
+.team-name-in {
+    animation: team-name-in 0.5s ease-in-out forwards;
+}
+
+
+@keyframes team-name-out {
+    0% {
+        width: 100%;
+    }
+
+
+    100% {
+        width: 0px;
+    }
+}
+
+
+@keyframes team-name-in {
+    0% {
+        width: 0px;
+    }
+
+
+    100% {
+        width: 100%;
+    }
+}
+
+.name {
+    width: max-content;
+}
+
+.score {
+    background: #0f043f;
+    color: #ffffff;
+    font-size: 28px;
+    font-weight: 900;
+    /* Placar bem destacado */
+    padding: 0 10px;
+}
+
+.score span {
+    margin: 0 10px;
+}
+
+.time {
+    display: flex;
+    position: relative;
+    z-index: 2;
+    justify-content: space-around;
+    background: #0f043f;
+    /* Vermelho escuro para o tempo */
+    color: white;
+    font-size: 24px;
+    box-sizing: border-box;
+    /* Garante que o padding não aumente o tamanho */
+    padding: 2px 0;
+}
+
+#half {
+    padding: 0 10px;
+}
+
+#extra-time {
+    font-size: 24px;
+    box-sizing: border-box;
+    /* Garante que o padding não aumente o tamanho */
+    padding: 2px 5px;
+    display: flex;
+    /* A chave! Coloca tudo em linha */
+    position: fixed;
+    flex-direction: column;
+    top: 120px;
+    left: 12px;
+    opacity: 0;
+    z-index: 1;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    color: #fff;
+    background: #ff0000;
+}
+
+.extra-time-animate {
+    animation: extra-time 2s ease-out forwards;
+}
+
+.extra-time-animate-out {
+    animation: extra-time-out 1s ease-out forwards;
+}
+
+
+@keyframes extra-time {
+    0% {
+        left: 90px;
+        /* Use a unidade (e.g., px, %, em) */
+        opacity: 0;
+    }
+
+    100% {
+        left: 162px;
+        /* Use a unidade (e.g., px, %, em) */
+        opacity: 1;
+    }
+}
+
+@keyframes extra-time-out {
+    0% {
+        left: 162px;
+        /* Use a unidade (e.g., px, %, em) */
+        opacity: 1;
+    }
+
+    100% {
+        left: 90px;
+        /* Use a unidade (e.g., px, %, em) */
+        opacity: 0;
+    }
+}
+
+#goal-animation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+}
+
+#goal-animation span {
+    font-size: 15vw;
+    color: #ffeb3b;
+    text-shadow: 0 0 20px #000, 0 0 40px #fff;
+}
+
+#goal-animation #goal-team-name {
+    font-size: 5vw;
+    color: white;
+}
+
+.animate-goal {
+    animation: goal-pop 5s ease-out forwards;
+}
+
+@keyframes goal-pop {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    20% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+
+    40% {
+        transform: scale(1.0);
+    }
+
+    80% {
+        transform: scale(1.0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+
+.animate-score-update {
+    animation: score-flash 1s ease;
+}
+
+@keyframes score-flash {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.5);
+        color: #D00000;
+    }
+
+    /* Pisca em vermelho */
+    100% {
+        transform: scale(1);
+    }
+}

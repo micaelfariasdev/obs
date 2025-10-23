@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Painel de Controle - Placar</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.js"></script>
+    <style>
+      /* Seu CSS permanece inalterado */
+      /* Oculta o checkbox nativo */
+      .switch-container input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      /* Container principal do Switch (a base) */
+      .switch-label {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+        background-color: #ccc;
+        border-radius: 34px;
+        cursor: pointer;
+        transition: background-color 0.4s;
+      }
+
+      /* O "deslizador" (a bolinha) */
+      .slider {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: transform 0.4s;
+      }
+
+      /* Arredonda o deslizador */
+      .slider.round {
+        border-radius: 50%;
+      }
+
+      /* ESTADO ATIVO (LIGADO) */
+
+      /* Mudar a cor de fundo da base quando o input estiver marcado */
+      .switch-container input:checked + .switch-label {
+        background-color: #2196f3;
+      }
+
+      /* Mover o deslizador quando o input estiver marcado */
+      .switch-container input:checked + .switch-label .slider {
+        transform: translateX(26px);
+      }
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background: #f4f4f4;
+      }
+      .container {
+        max-width: 800px;
+        margin: auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+      }
+      .team {
+        border: 1px solid #ccc;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+      }
+      .timer {
+        border: 1px solid #ccc;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+      }
+      input[type="text"],
+      input[type="number"] {
+        width: 90%;
+        padding: 8px;
+        margin-bottom: 10px;
+      }
+      button {
+        padding: 10px 15px;
+        margin: 5px;
+        cursor: pointer;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+      }
+      button:hover {
+        background: #0056b3;
+      }
+      .score-controls {
+        display: flex;
+        align-items: center;
+      }
+      .score-controls button {
+        font-size: 1.2em;
+        padding: 5px 12px;
+      }
+      .score-controls input {
+        width: 60px;
+        text-align: center;
+        font-size: 1.2em;
+        margin: 0 10px;
+      }
+      .header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Painel de Controle do Placar</h1>
+        <div class="switch-container">
+          <input type="checkbox" id="meuSwitch" onChange="activateScore()" />
+
+          <label for="meuSwitch" class="switch-label">
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+      <div style="display: flex; justify-content: space-between">
+        <div class="team" style="width: 48%; display:flex; flex-direction: column">
+          <h2>Time A (Casa)</h2>
+          <label>Cor:</label>
+          <input type="color" id="teamA_color" value="Arsenal" />
+          <label>Nome Completo (para GOL):</label>
+          <input type="text" id="teamA_name" value="Arsenal" />
+          <label>Abreviação (3 letras):</label>
+          <input type="text" id="teamA_short" value="ARS" maxlength="3" />
+          <label>URL do Logo:</label>
+          <input
+            type="text"
+            id="teamA_logo"
+            value="https://upload.wikimedia.org/wikipedia/pt/5/53/Arsenal_FC.svg"
+          />
+          <label>Gols:</label>
+          <div class="score-controls">
+            <button onclick="changeScore('teamA_score', -1)">-</button>
+            <input type="number" id="teamA_score" value="0" min="0" />
+            <button onclick="changeScore('teamA_score', 1)">+</button>
+          </div>
+        </div>
+        <div class="team" style="width: 48%; display:flex; flex-direction: column">
+          <h2>Time B (Visitante)</h2>
+          <label>Cor:</label>
+          <input type="color" id="teamB_color" value="Chelsea" />
+          <label>Nome Completo (para GOL):</label>
+          <input type="text" id="teamB_name" value="Chelsea" />
+          <label>Abreviação (3 letras):</label>
+          <input type="text" id="teamB_short" value="CHE" maxlength="3" />
+          <label>URL do Logo:</label>
+          <input
+            type="text"
+            id="teamB_logo"
+            value="https://upload.wikimedia.org/wikipedia/pt/c/cf/Chelsea_FC.svg"
+          />
+          <label>Gols:</label>
+          <div class="score-controls">
+            <button onclick="changeScore('teamB_score', -1)">-</button>
+            <input type="number" id="teamB_score" value="0" min="0" />
+            <button onclick="changeScore('teamB_score', 1)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="timer">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+          "
+        >
+          <h2>Tempo de Jogo</h2>
+
+          <span
+            id="realtime_display"
+            style="
+              font-size: 2.5em;
+              font-weight: bold;
+              color: #dc3545;
+              font-family: 'Courier New', monospace;
+              padding: 5px 10px;
+              border: 2px solid #ccc;
+              border-radius: 4px;
+              background: #333;
+            "
+            >00:00</span
+          >
+
+          <input type="hidden" id="timer" value="00:00" />
+        </div>
+
+        <label>Tempo Inicial (MM:SS):</label>
+        <input
+          type="text"
+          id="initial_time"
+          value="00:00"
+          placeholder="MM:SS"
+          style="width: 150px"
+        />
+
+        <label>Prorrogação/Acréscimos (ex: +3):</label>
+        <input type="text" id="extra_time" value="" style="width: 150px" />
+        <br />
+        <button onclick="startStopTimer()" id="timer_toggle">
+          Iniciar Timer
+        </button>
+        <button onclick="resetTimer()">Resetar Timer</button>
+      </div>
+
+      <button
+        style="width: 100%; background: #2874a7ff; font-size: 1.5em"
+        onclick="extendMode()"
+      >
+        MODO EXTENSO
+      </button>
+      <button
+        style="width: 100%; background: #28a745; font-size: 1.5em"
+        onclick="sendUpdate()"
+      >
+        ATUALIZAR OVERLAY
+      </button>
+    </div>
+
+    <script>
+      var socket = io.connect(
+        "http://" + document.domain + ":" + location.port
+      );
+      let timerInterval = null;
+      let timeInSeconds = 0;
+      let isRunning = false;
+
+      function timeToSeconds(timeStr) {
+        const parts = timeStr.split(":");
+        const minutes = parseInt(parts[0] || 0);
+        const seconds = parseInt(parts[1] || 0);
+        return minutes * 60 + seconds;
+      }
+
+      function secondsToTime(totalSeconds) {
+        let minutes = Math.floor(totalSeconds / 60);
+        let seconds = totalSeconds % 60;
+        return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
+          2,
+          "0"
+        )}`;
+      }
+
+      function startStopTimer() {
+        const toggleButton = document.getElementById("timer_toggle");
+
+        if (isRunning) {
+          clearInterval(timerInterval);
+          toggleButton.textContent = "Iniciar Timer";
+          toggleButton.style.background = "#007bff";
+          isRunning = false;
+        } else {
+          // Lógica para carregar o tempo inicial (só na primeira vez ou após reset)
+          if (timeInSeconds === 0) {
+            const initialTimeStr =
+              document.getElementById("initial_time").value;
+            timeInSeconds = timeToSeconds(initialTimeStr);
+          }
+
+          toggleButton.textContent = "Pausar Timer";
+          toggleButton.style.background = "#dc3545";
+          isRunning = true;
+
+          timerInterval = setInterval(() => {
+            timeInSeconds++;
+            const currentTimeStr = secondsToTime(timeInSeconds);
+
+            // Atualiza o input OCULTO (para envio)
+            document.getElementById("timer").value = currentTimeStr;
+            // Atualiza o DISPLAY DIGITAL
+            document.getElementById("realtime_display").textContent =
+              currentTimeStr;
+
+            sendTime();
+          }, 1000);
+        }
+      }
+
+      function resetTimer() {
+        clearInterval(timerInterval);
+        isRunning = false;
+        timeInSeconds = 0;
+
+        // O display e o input oculto voltam ao valor do input inicial
+        const initialTimeStr = document.getElementById("initial_time").value;
+        document.getElementById("timer").value = initialTimeStr;
+        document.getElementById("realtime_display").textContent =
+          initialTimeStr;
+
+        document.getElementById("timer_toggle").textContent = "Iniciar Timer";
+        document.getElementById("timer_toggle").style.background = "#007bff";
+
+        sendTime();
+      }
+
+      function changeScore(id, amount) {
+        const input = document.getElementById(id);
+        let currentScore = parseInt(input.value);
+        currentScore += amount;
+        if (currentScore < 0) currentScore = 0;
+        input.value = currentScore;
+        sendUpdate(); // Envia a atualização do placar ao alterar o score
+      }
+
+      function activateScore() {
+        const switchElement = document.getElementById("meuSwitch");
+        socket.emit("score_enable", switchElement.checked);
+      }
+
+      // Funções de envio de dados (inalteradas)
+      function sendUpdate() {
+        var data = {
+          teamA_name: document.getElementById("teamA_name").value,
+          teamA_short: document
+            .getElementById("teamA_short")
+            .value.toUpperCase(),
+          teamA_logo: document.getElementById("teamA_logo").value,
+          teamA_score: document.getElementById("teamA_score").value,
+          teamA_color: document.getElementById("teamA_color").value,
+          
+          teamB_name: document.getElementById("teamB_name").value,
+          teamB_short: document
+          .getElementById("teamB_short")
+          .value.toUpperCase(),
+          teamB_logo: document.getElementById("teamB_logo").value,
+          teamB_score: document.getElementById("teamB_score").value,
+          teamB_color: document.getElementById("teamB_color").value,
+
+          timer: document.getElementById("timer").value,
+          extra_time: document.getElementById("extra_time").value || null,
+        };
+        socket.emit("update_scoreboard", data);
+      }
+
+      function sendTime() {
+        var data = {
+          timer: document.getElementById("timer").value,
+          extra_time: document.getElementById("extra_time").value,
+        };
+        socket.emit("update_time", data);
+      }
+
+      function extendMode() {
+        var data = {
+          extend: true,
+          teamA_name: document.getElementById("teamA_name").value,
+          teamB_name: document.getElementById("teamB_name").value,
+          teamA_short: document
+            .getElementById("teamA_short")
+            .value.toUpperCase(),
+          teamB_short: document
+            .getElementById("teamB_short")
+            .value.toUpperCase(),
+        };
+        socket.emit("extend_mode", data);
+      }
+
+      window.onload = function () {
+        const initialTimeStr = document.getElementById("initial_time").value;
+        document.getElementById("timer").value = initialTimeStr;
+        document.getElementById("realtime_display").textContent =
+          initialTimeStr;
+        sendUpdate();
+      };
+    </script>
+  </body>
+</html>
