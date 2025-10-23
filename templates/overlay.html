@@ -10,11 +10,11 @@
 </head>
 
 <body>
-  <div id="scoreboard-container">
+  <div id="scoreboard-container" class="hidden">
     <div class="team-container">
-      <div class="color-teamA"></div>
+      <div class="color-team color-teamA"></div>
       <div class="logo hidden" id="logoA_container">
-        <img id="teamA_logo" src="" />
+        <img id="teamA_logo" src="" alt="Logo Time A" />
       </div>
       <div class="team" id="teamA">
         <span class="name" id="teamA_short">ARS</span>
@@ -25,12 +25,12 @@
     </div>
 
     <div class="team-container">
-      <div class="color-teamB"></div>
+      <div class="color-team color-teamB"></div>
       <div class="team" id="teamB">
         <span class="name" id="teamB_short">CHE</span>
       </div>
       <div class="logo hidden" id="logoB_container">
-        <img id="teamB_logo" src="" />
+        <img id="teamB_logo" src="" alt="Logo Time B" />
       </div>
       <div class="score">
         <span id="teamB_score">0</span>
@@ -41,7 +41,7 @@
       <span id="half">1º</span>
       <span id="timer">00:00</span>
     </div>
-    <div id="extra-time hidden">
+    <div id="extra-time">
       <span id="extra-timer"></span>
     </div>
   </div>
@@ -50,209 +50,8 @@
     <span>GOL!</span>
     <span id="goal-team-name"></span>
   </div>
+  <script src="{{ url_for('static', filename='score.js') }}"></script>
 
-  <script>
-    var socket = io.connect(
-      "http://" + document.domain + ":" + location.port
-    );
-    let oldScoreA = 0;
-    let oldScoreB = 0;
-
-    socket.on("data_updated", function (data) {
-      console.log(data);
-
-      document.getElementById("teamA_logo").src = data.teamA_logo;
-      document.getElementById("teamB_logo").src = data.teamB_logo;
-
-      document.getElementById("teamA_short").textContent = data.teamA_short;
-      document.getElementById("teamB_short").textContent = data.teamB_short;
-
-      const colorElementA = document.querySelector(".color-teamA");
-      const colorElementB = document.querySelector(".color-teamB");
-
-      if (colorElementA) {
-        colorElementA.style.background = data.teamA_color;
-      } else {
-        console.error("Erro: Elemento .color-teamA não encontrado no DOM.");
-      }
-
-      // Faça o mesmo para o colorElementB e qualquer outro seletor na função!
-      if (colorElementB) {
-        colorElementB.style.background = data.teamB_color;
-      }
-
-      const newScoreA = parseInt(data.teamA_score);
-      const newScoreB = parseInt(data.teamB_score);
-
-      if (newScoreA > oldScoreA) {
-        triggerGoalAnimation(data.teamA_name);
-        triggerScoreUpdate("teamA_score");
-      } else if (newScoreA < oldScoreA) {
-        triggerScoreUpdate("teamA_score");
-      }
-
-      if (newScoreB > oldScoreB) {
-        triggerGoalAnimation(data.teamB_name);
-        triggerScoreUpdate("teamB_score");
-      } else if (newScoreB < oldScoreB) {
-        triggerScoreUpdate("teamB_score");
-      }
-
-      extraTimed(data.extra_time);
-
-      document.getElementById("teamA_score").textContent = data.teamA_score;
-      document.getElementById("teamB_score").textContent = data.teamB_score;
-
-      oldScoreA = newScoreA;
-      oldScoreB = newScoreB;
-    });
-
-    socket.on("data_timed", function (data) {
-      document
-        .getElementById("scoreboard-container")
-        .classList.remove("hidden");
-
-      document.getElementById("timer").textContent = data.timer;
-    });
-
-    socket.on("score_enable", function (data) {
-      const scoreboard = document.getElementById("scoreboard-container");
-
-      const extaTimeDiv = document.getElementById("extra-time");
-      const duration = 1000;
-
-      if (data) {
-        if (extaTimeDiv) {
-
-          if (extaTimeDiv.classList.contains("extra-time-animate-out")) {
-            scoreboard.classList.remove("out-score");
-            scoreboard.classList.add("in-score");
-
-            setTimeout(() => {
-              extaTimeDiv.classList.add("extra-time-animate");
-              extaTimeDiv.classList.remove("extra-time-animate-out");
-            }, duration);
-          } else {
-            setTimeout(() => {
-              scoreboard.classList.remove("out-score");
-              scoreboard.classList.add("in-score");
-            }, 1000);
-          }
-        } else {
-          scoreboard.classList.remove("out-score");
-          scoreboard.classList.add("in-score");
-        }
-      } else {
-        if (extaTimeDiv) {
-
-          if (extaTimeDiv.classList.contains("extra-time-animate")) {
-            extaTimeDiv.classList.remove("extra-time-animate");
-            extaTimeDiv.classList.add("extra-time-animate-out");
-
-            setTimeout(() => {
-              scoreboard.classList.remove("in-score");
-              scoreboard.classList.add("out-score");
-            }, duration);
-          } else {
-            setTimeout(() => {
-              scoreboard.classList.remove("in-score");
-              scoreboard.classList.add("out-score");
-            }, 1000);
-          }
-        } else {
-          scoreboard.classList.remove("in-score");
-          scoreboard.classList.add("out-score")
-        }
-      }
-    });
-
-    function triggerGoalAnimation(teamName) {
-      const goalDiv = document.getElementById("goal-animation");
-      document.getElementById("goal-team-name").textContent = teamName;
-      goalDiv.classList.remove("hidden");
-      goalDiv.classList.add("animate-goal");
-      setTimeout(() => {
-        goalDiv.classList.add("hidden");
-        goalDiv.classList.remove("animate-goal");
-      }, 5000);
-    }
-
-    function extraTimed(extra) {
-      if (extra) {
-        const extaTimeDiv = document.getElementById("extra-time");
-        document.getElementById("extra-timer").textContent = extra;
-        extaTimeDiv.classList.add("extra-time-animate");
-        extaTimeDiv.classList.remove("hidden");
-      } else if (extra === null) {
-        const extaTimeDiv = document.getElementById("extra-time");
-        extaTimeDiv.classList.remove("extra-time-animate");
-        extaTimeDiv.classList.add("extra-time-animate-out");
-      }
-    }
-
-    socket.on("extend_mode", function (data) {
-      if (data.extend) {
-        const teamA = document.getElementById("teamA_short");
-        const teamB = document.getElementById("teamB_short");
-        const teamClasses = document.querySelectorAll(".name");
-
-        const duration = 1000;
-
-        // FASE 1: MOSTRA OS NOMES COMPLETOS (modo estendido)
-
-        // 1. Inicia a animação de SAÍDA dos nomes atuais
-        for (let i = 0; i < teamClasses.length; i++) {
-          teamClasses[i].classList.remove("team-name-in");
-          teamClasses[i].classList.add("team-name-out");
-        }
-
-        // 2. Espera a animação de SAÍDA terminar para trocar o texto e iniciar a ENTRADA
-        setTimeout(() => {
-          // Troca o texto para o nome completo (extendido)
-          teamA.textContent = data.teamA_name;
-          teamB.textContent = data.teamB_name;
-
-          // Inicia a animação de ENTRADA do nome completo
-          for (let i = 0; i < teamClasses.length; i++) {
-            teamClasses[i].classList.remove("team-name-out");
-            teamClasses[i].classList.add("team-name-in");
-          }
-
-          // FASE 2: RETORNA PARA OS NOMES CURTOS (após um tempo)
-
-          // 3. Agenda o retorno para o nome curto após um período visível (ex: 3000ms a mais)
-          setTimeout(() => {
-            // Inicia a animação de SAÍDA dos nomes completos
-            for (let i = 0; i < teamClasses.length; i++) {
-              teamClasses[i].classList.remove("team-name-in");
-              teamClasses[i].classList.add("team-name-out");
-            }
-
-            // 4. Espera a segunda animação de SAÍDA para trocar o texto e iniciar a ENTRADA
-            setTimeout(() => {
-              // Troca o texto de volta para o nome curto
-              teamA.textContent = data.teamA_short;
-              teamB.textContent = data.teamB_short;
-
-              // Inicia a animação de ENTRADA do nome curto
-              for (let i = 0; i < teamClasses.length; i++) {
-                teamClasses[i].classList.remove("team-name-out");
-                teamClasses[i].classList.add("team-name-in");
-              }
-            }, duration); // Aguarda o tempo da animação (1000ms)
-          }, duration + 5000); // Aguarda a animação (1000ms) + o tempo de exibição (3000ms)
-        }, duration); // Aguarda o tempo da animação inicial (1000ms)
-      }
-    });
-
-    function triggerScoreUpdate(elementId) {
-      const scoreElement = document.getElementById(elementId);
-      scoreElement.classList.add("animate-score-update");
-      setTimeout(() => {
-        scoreElement.classList.remove("animate-score-update");
-      }, 1000);
-    }
-  </script>
 </body>
 
 </html>

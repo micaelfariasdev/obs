@@ -38,29 +38,26 @@ body {
 @keyframes in-score {
     0% {
         opacity: 0;
-        /* Começa invisível para suavizar a entrada */
-        max-width: 0px;
         max-height: 10px;
+        width: 0px;
 
     }
 
     30% {
-        /* Ajuste para começar a mostrar a opacidade antes da largura */
         opacity: 1;
         max-height: 10px;
     }
 
     50% {
         opacity: 1;
-        max-width: 150px;
+        width: 150px;
         max-height: 10px;
-        /* <--- Mantenha a altura zero para o efeito de deslizar primeiro */
     }
-
+    
     100% {
         opacity: 1;
-        max-width: 150px;
         max-height: 200px;
+        width: fit-content;
     }
 }
 
@@ -94,11 +91,11 @@ body {
 
 
 .color-teamA {
-    width: 10px;
+    width: 20px;
     background-color: turquoise;
 }
 .color-teamB {
-    width: 10px;
+    width: 20px;
     background-color: turquoise;
 }
 
@@ -237,11 +234,11 @@ body {
 }
 
 .extra-time-animate {
-    animation: extra-time 2s ease-out forwards;
+    animation: extra-time 1s ease-out forwards;
 }
 
 .extra-time-animate-out {
-    animation: extra-time-out 1s ease-out forwards;
+    animation: extra-time-out 0.5s ease-out forwards;
 }
 
 
@@ -253,7 +250,7 @@ body {
     }
 
     100% {
-        left: 162px;
+        left: 175px;
         /* Use a unidade (e.g., px, %, em) */
         opacity: 1;
     }
@@ -261,7 +258,7 @@ body {
 
 @keyframes extra-time-out {
     0% {
-        left: 162px;
+        left: 175px;
         /* Use a unidade (e.g., px, %, em) */
         opacity: 1;
     }
