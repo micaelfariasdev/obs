@@ -1,8 +1,4 @@
-var socket = io.connect(
-    "http://" + document.domain + ":" + location.port
-);
-
-var socket = io.connect();
+var socket = io.connect("https://" + document.domain);
 let oldScoreA = 0;
 let oldScoreB = 0;
 
