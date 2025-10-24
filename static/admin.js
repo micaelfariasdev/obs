@@ -1,6 +1,8 @@
 var socket = io.connect(
     "http://" + document.domain + ":" + location.port
 );
+
+var socket = io.connect();
 let timerInterval = null;
 let timeInSeconds = 0;
 let isRunning = false;
