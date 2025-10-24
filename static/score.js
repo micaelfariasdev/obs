@@ -1,4 +1,5 @@
 var socket = io.connect();
+
 let oldScoreA = 0;
 let oldScoreB = 0;
 
