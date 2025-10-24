@@ -1,0 +1,22 @@
+[Unit]
+Description=Servico Gunicorn para a aplicacao Flask do Placar
+After=network.target
+
+[Service]
+# User e Grupo que vao rodar o processo
+User=ubuntu
+Group=ubuntu
+
+# Diretorio onde esta seu app.py
+WorkingDirectory=/home/ubuntu/obs
+
+# Comando completo para iniciar o Gunicorn (MUITO IMPORTANTE!)
+# Deve apontar para o Gunicorn DENTRO do seu venv
+ExecStart=/home/ubuntu/obs/venv/bin/gunicorn --bind 0.0.0.0:3030 app:app -w 4
+
+# Reinicia o Gunicorn automaticamente se ele sair
+Restart=always
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
