@@ -1,3 +1,4 @@
+localStorage.debug = 'socket.io-client:socket';
 var socket = io.connect();
 
 
