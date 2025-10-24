@@ -1,4 +1,4 @@
-var socket = io.connect("https://" + document.domain + '/obs/');
+var socket = io.connect();
 let oldScoreA = 0;
 let oldScoreB = 0;
 
