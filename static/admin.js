@@ -1,5 +1,4 @@
-localStorage.debug = 'socket.io-client:socket';
-var socket = io.connect();
+var socket = io.connect('https://micaelfarias.com/obs/');
 
 
 let timerInterval = null;
