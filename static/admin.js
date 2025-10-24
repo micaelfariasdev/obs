@@ -1,4 +1,4 @@
-var socket = io.connect("https://" + document.domain + '/');
+var socket = io.connect("https://" + document.domain + '/obs/');
 
 let timerInterval = null;
 let timeInSeconds = 0;
