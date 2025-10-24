@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'seu_segredo_padrao_muito_longo') 
 socketio = SocketIO(app)
 
-@app.route('/')
+@app.route('/painel')
 def admin():
     return render_template('admin.html')
 
@@ -31,6 +31,9 @@ def score_enable(data):
 @socketio.on('extend_mode')
 def extend_mode(data):
     emit('extend_mode', data, broadcast=True)
+@socketio.on('lower-third')
+def lowerThird(data):
+    emit('lower-third', data, broadcast=True)
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)

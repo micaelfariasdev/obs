@@ -1,57 +1,17 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Overlay Placar</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.js"></script>
+    <link rel="stylesheet" href="../static/score.css" />
+    <link rel="stylesheet" href="../static/gol.css" />
+    <link rel="stylesheet" href="../static/lowerThird.css" />
+    <script src="../static/score.js"></script>
+    <script src="../static/gol.js"></script>
+    <script src="../static/lowerThird.js" defer></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <title>Overlay Placar</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.js"></script>
-  <link rel="stylesheet" href="../static/style.css" />
-  <script src="../static/score.js"></script>
-
-</head>
-
-<body>
-  <div id="scoreboard-container" class="hidden">
-    <div class="team-container">
-      <div class="color-team color-teamA"></div>
-      <div class="logo hidden" id="logoA_container">
-        <img id="teamA_logo" src="" alt="Logo Time A" />
-      </div>
-      <div class="team" id="teamA">
-        <span class="name" id="teamA_short">ARS</span>
-      </div>
-      <div class="score">
-        <span id="teamA_score">0</span>
-      </div>
-    </div>
-
-    <div class="team-container">
-      <div class="color-team color-teamB"></div>
-      <div class="team" id="teamB">
-        <span class="name" id="teamB_short">CHE</span>
-      </div>
-      <div class="logo hidden" id="logoB_container">
-        <img id="teamB_logo" src="" alt="Logo Time B" />
-      </div>
-      <div class="score">
-        <span id="teamB_score">0</span>
-      </div>
-    </div>
-
-    <div class="time">
-      <span id="half">1º</span>
-      <span id="timer">00:00</span>
-    </div>
-    <div id="extra-time">
-      <span id="extra-timer"></span>
-    </div>
-  </div>
-
-  <div id="goal-animation" class="hidden">
-    <span>GOL!</span>
-    <span id="goal-team-name"></span>
-  </div>
-
-</body>
-
-</html>
+  <body>
+    {% include "parts/placar.html" %} {% include "parts/gol.html" %}
+    {% include "parts/lowerThird.html" %}

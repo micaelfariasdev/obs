@@ -1,0 +1,209 @@
+.card-lower-third {
+    position: absolute;
+    top: 88%; /* Um pouco mais para cima que o de gol, para não colidir */
+    left: 0;
+    /* width: 45%;  */
+    height: 70px;
+    background-color: #333; /* Cor de fundo (será mudada pelo JS) */
+    display: flex;
+    align-items: center;
+    z-index: 9999;
+    gap: 20px;
+    
+    /* Começa fora da tela */
+    transform: translateX(-100%);
+    
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+/* 1. O Cartão (Gráfico) */
+.card-graphic {
+    width: 40px;
+    height: 55px;
+    border-radius: 5px;
+    margin-left: 15px;
+    margin-right: 10px;
+    
+    /* Começa "deitado" e invisível, pronto para animar */
+    transform: scale(0.8) rotateY(90deg);
+    opacity: 0;
+}
+
+/* Classes de Cor que o JS vai adicionar */
+.card-graphic.yellow {
+    background-color: #FFD700; /* Amarelo Ouro */
+    border: 2px solid #DAA520;
+}
+.card-graphic.red {
+    background-color: #DC143C; /* Vermelho Carmesim */
+    border: 2px solid #8B0000;
+}
+
+
+/* 2. Informações (Logo + Nome) */
+.card-info {
+    display: flex;
+    align-items: center;
+    flex: 1; /* <-- ADICIONE ISSO */
+    min-width: 0; /* <-- ADICIONE ISSO (importante para flexbox) */
+}
+
+.card-info img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    margin-right: 10px;
+}
+
+.card-info p {
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+    white-space: nowrap;
+    overflow: hidden; /* <-- ADICIONE ISSO */
+    text-overflow: ellipsis; /* <-- ADICIONE ISSO */
+}
+
+/* 3. Título (Ex: "CARTÃO AMARELO") */
+.card-title {
+    /* margin-left: auto; */ /* <-- REMOVA OU COMENTE ISSO */
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    background-color: rgba(0, 0, 0, 0.3);
+    flex-shrink: 0; /* Opcional, mas garante que o título não encolha */
+}
+
+.card-title p {
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+/* --- ANIMAÇÕES DO CARTÃO --- */
+
+/* Classe principal que ativa tudo */
+.animate-single-card,
+.animate-second-yellow {
+    animation: card-slide-in-out 10s ease-in-out forwards;
+}
+
+/* Animação do container principal (desliza) */
+@keyframes card-slide-in-out {
+    0% {
+        transform: translateX(-100%);
+    }
+    10% {
+        transform: translateX(0%);
+    }
+    90% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.animate-single-card .card-graphic {
+    /* O cartão que queremos mostrar vai tocar esta animação */
+    animation: card-flip-in 10s ease-in-out;
+}
+
+/* Este keyframe continua o mesmo, mas agora é reutilizado */
+@keyframes card-flip-in {
+    0%, 5% {
+        transform: scale(0.8) rotateY(90deg);
+        opacity: 0;
+    }
+    10% {
+        transform: scale(1) rotateY(0deg);
+        opacity: 1;
+    }
+    90% {
+        transform: scale(1) rotateY(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.8) rotateY(90deg);
+        opacity: 0;
+    }
+}
+/* Container que segura os 3 cartões */
+.card-graphics-container {
+    position: relative;
+    width: 60px; /* Um pouco mais largo para caber 2 cartões lado a lado */
+    height: 55px;
+    margin-left: 15px;
+    margin-right: 10px;
+}
+
+/* Modifica o .card-graphic original para ser absoluto */
+.card-graphic {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 40px;
+    height: 55px;
+    border-radius: 5px;
+    
+    /* Todos começam escondidos */
+    transform: scale(0);
+    opacity: 0;
+}
+
+/* Posição do segundo cartão (um pouco para a direita) */
+#card-graphic-2 {
+    left: 15px; 
+}
+
+/* Posição do cartão vermelho (centralizado no container de 60px) */
+#card-graphic-red {
+    left: 10px; 
+    /* Garante que a classe 'red' funcione */
+    background-color: #DC143C;
+    border: 2px solid #8B0000;
+}
+
+/* --- NOVA ANIMAÇÃO: SEGUNDO AMARELO --- */
+
+/* Esta classe toca a animação de 3 cartões em sequência */
+.animate-second-yellow #card-graphic-1 {
+    animation: second-yellow-1 10s ease-in-out forwards;
+}
+.animate-second-yellow #card-graphic-2 {
+    animation: second-yellow-2 10s ease-in-out forwards;
+}
+.animate-second-yellow #card-graphic-red {
+    animation: second-yellow-red 10s ease-in-out forwards;
+}
+
+/* Keyframe para o 1º Amarelo */
+@keyframes second-yellow-1 {
+    0%, 5% { transform: scale(0.8) rotateY(90deg); opacity: 0; } /* Entra */
+    10% { transform: scale(1) rotateY(0deg); opacity: 1; }
+    20% { transform: scale(1) rotateY(0deg); opacity: 1; } /* Fica */
+    30%, 100% { transform: scale(0); opacity: 0; } /* Some */
+}
+
+/* Keyframe para o 2º Amarelo */
+@keyframes second-yellow-2 {
+    0%, 10% { transform: scale(0.8) rotateY(90deg); opacity: 0; } /* Espera */
+    15% { transform: scale(1) rotateY(0deg); opacity: 1; } /* Entra */
+    20% { transform: scale(1) rotateY(0deg); opacity: 1; } /* Fica */
+    30%, 100% { transform: scale(0); opacity: 0; } /* Some */
+}
+
+/* Keyframe para o Vermelho que aparece */
+@keyframes second-yellow-red {
+    0%, 25% { transform: scale(0); opacity: 0; } /* Espera */
+    35% { transform: scale(1.2); opacity: 1; } /* Aparece com "pop" */
+    40% { transform: scale(1); opacity: 1; } /* Assenta */
+    90% { transform: scale(1); opacity: 1; } /* Fica */
+    100% { transform: scale(0); opacity: 0; } /* Some */
+}

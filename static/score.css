@@ -7,6 +7,7 @@ body {
     /* Texto mais "grosso" */
     color: white;
     overflow: hidden;
+    aspect-ratio: 16/9;
 }
 
 .hidden {
@@ -280,7 +281,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(128, 31, 31, 0.5);
     z-index: 100;
 }
 

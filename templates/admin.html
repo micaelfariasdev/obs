@@ -5,171 +5,8 @@
   <meta charset="UTF-8" />
   <title>Painel de Controle - Placar</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.js"></script>
-  <script src="../static/admin.js"></script>
-
-
-  <style>
-    /* Seu CSS permanece inalterado */
-    /* Oculta o checkbox nativo */
-    .switch-container input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    /* Container principal do Switch (a base) */
-    .switch-label {
-      position: relative;
-      display: inline-block;
-      width: 60px;
-      height: 34px;
-      background-color: #ccc;
-      border-radius: 34px;
-      cursor: pointer;
-      transition: background-color 0.4s;
-    }
-
-    /* O "deslizador" (a bolinha) */
-    .slider {
-      position: absolute;
-      content: "";
-      height: 26px;
-      width: 26px;
-      left: 4px;
-      bottom: 4px;
-      background-color: white;
-      transition: transform 0.4s;
-    }
-
-    /* Arredonda o deslizador */
-    .slider.round {
-      border-radius: 50%;
-    }
-
-    /* ESTADO ATIVO (LIGADO) */
-
-    /* Mudar a cor de fundo da base quando o input estiver marcado */
-    .switch-container input:checked+.switch-label {
-      background-color: #2196f3;
-    }
-
-    /* Mover o deslizador quando o input estiver marcado */
-    .switch-container input:checked+.switch-label .slider {
-      transform: translateX(26px);
-    }
-
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      background: #f4f4f4;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-    }
-
-    .team {
-      border: 1px solid #ccc;
-      padding: 15px;
-      margin-bottom: 15px;
-      border-radius: 5px;
-    }
-
-    .timer {
-      border: 1px solid #ccc;
-      padding: 15px;
-      margin-bottom: 15px;
-      border-radius: 5px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    input[type="text"],
-    input[type="number"],
-    select {
-      width: 90%;
-      padding: 8px;
-      margin-bottom: 10px;
-    }
-
-    button {
-      padding: 10px 15px;
-      margin: 5px;
-      cursor: pointer;
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-    }
-
-    button:hover {
-      background: #0056b3;
-    }
-
-    .score-controls {
-      display: flex;
-      align-items: center;
-    }
-
-    .score-controls button {
-      font-size: 1.2em;
-      padding: 5px 12px;
-    }
-
-    .score-controls input {
-      width: 60px;
-      text-align: center;
-      font-size: 1.2em;
-      margin: 0 10px;
-    }
-
-    .header {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-    }
-
-    iframe {
-      aspect-ratio: 16/9;
-      height: 50vh;
-    }
-    .iframe {
-      margin: auto;
-      padding: -10% ;
-      /* Altura padrão para visualização */
-      transition: margin 1s ease-in-out, opacity 0.5s ease-in-out;
-      overflow: hidden;
-    }
-
-    /* 2. Classe de Colapso (a chave!) */
-    .iframe.collapsed {
-      padding: -50% ;
-      opacity: 0;
-      display: none;
-      /* Opacidade zero para esconder totalmente */
-      border: none;
-    }
-
-    /* 3. Estilo do Botão */
-    #toggle-iframe-btn {
-      padding: 10px 15px;
-      margin-bottom: 10px;
-      cursor: pointer;
-      background: #555;
-      color: white;
-      border: none;
-      border-radius: 5px;
-    }
-
-    .body{
-      display: flex;
-      gap: 10px;
-    }
-  </style>
+  <script src="../static/admin.js" defer></script>
+  <link rel="stylesheet" href="../static/admin.css" />
 </head>
 
 <body>
@@ -185,7 +22,7 @@
     </a>
   </div>
   <div class="body">
-    <div class="container">
+    <div class="container" id="placar">
       <div class="header">
         <h1>Painel de Controle do Placar</h1>
         <div class="switch-container">
@@ -278,7 +115,31 @@
 
     </div>
 
+    <div class="container" id="lower">
+      <div class="header">
+        <h1>Painel de Lower Thirds</h1>
+        <button id="novo-btn" onclick="toggleAddForm()" class="btn">Novo</button>
+        <button id="enviar-todos-btn" onclick="sendAllLowers()" class="btn btn-primary">Enviar Todos</button>
+      </div>
+
+      <div class="list-lowers">
+
+        <div class="lower-item" id="add-form" style="display: none;">
+          <input type="text" id="text-lower" placeholder="Texto (ex: G. Arrascaeta 14')">
+          <select id="type-lower">
+            <option value="cardRed">Cartão Vermelho</option>
+            <option value="cardYellow">Cartão Amarelo</option>
+            <option value="secondyellow">Segundo Amarelo</option>
+          </select>
+          <button id="save-btn" onclick="salvar()" class="btn btn-success">Salvar</button>
+        </div>
+
+        <div id="items"></div>
+      </div>
+    </div>
   </div>
+
+
 
 
 </body>

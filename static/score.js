@@ -1,4 +1,4 @@
-var socket = io.connect();
+const socket = io.connect();
 
 let oldScoreA = 0;
 let oldScoreB = 0;
@@ -60,15 +60,6 @@ function extraTimed(extra) {
 // --- Handlers de Socket ---
 
 socket.on("data_updated", function (data) {
-    // console.log(data); // Deixei o log comentado para um ambiente de produção
-
-    getElement('#teamA_logo').src = data.teamA_logo;
-    getElement('#teamB_logo').src = data.teamB_logo;
-
-    getElement('#teamA_short').textContent = data.teamA_short;
-    getElement('#teamB_short').textContent = data.teamB_short;
-
-    // Aplicação de Cores de Fundo (com verificação de segurança)
     const colorElementA = getElement(".color-teamA");
     const colorElementB = getElement(".color-teamB");
 
@@ -78,34 +69,22 @@ socket.on("data_updated", function (data) {
     const newScoreA = parseInt(data.teamA_score);
     const newScoreB = parseInt(data.teamB_score);
 
-    // Lógica de GOL/REVERSÃO
-    if (newScoreA > oldScoreA) {
-        triggerGoalAnimation(data.teamA_name);
-    }
     if (newScoreA !== oldScoreA) {
         triggerScoreUpdate("teamA_score");
-    }
-
-    if (newScoreB > oldScoreB) {
-        triggerGoalAnimation(data.teamB_name);
     }
     if (newScoreB !== oldScoreB) {
         triggerScoreUpdate("teamB_score");
     }
-
     extraTimed(data.extra_time); // Chama a função para lidar com o tempo extra
-
     getElement('#teamA_score').textContent = data.teamA_score;
     getElement('#teamB_score').textContent = data.teamB_score;
+    getElement('#half').textContent = data.half;
 
     oldScoreA = newScoreA;
     oldScoreB = newScoreB;
 });
 
 socket.on("data_timed", function (data) {
-    // CORRIGIDO: O placar deve ser visível antes de receber o tempo, 
-    // mas a classe 'hidden' deve ser removida pela animação 'in-score'
-    // Apenas atualiza o tempo
     getElement('#timer').textContent = data.timer;
 });
 
