@@ -1,4 +1,4 @@
-var socket = io.connect('https://micaelfarias.com/obs/');
+var socket = io.connect();
 
 
 let timerInterval = null;

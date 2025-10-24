@@ -6,7 +6,7 @@ from flask_socketio import SocketIO, emit
 # Recomendado: Defina o SECRET_KEY com uma variável de ambiente (melhor seguranca)
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'seu_segredo_padrao_muito_longo') 
-socketio = SocketIO(app, path='/obs/socket.io')
+socketio = SocketIO(app)
 
 @app.route('/')
 def admin():
@@ -33,7 +33,4 @@ def extend_mode(data):
     emit('extend_mode', data, broadcast=True)
 
 if __name__ == '__main__':
-    print("Servidor iniciado em http://127.0.0.1:5000")
-    # REMOVIDO: socketio.run()
-    # Adicionamos uma inicialização simples para desenvolvimento
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)
