@@ -6,7 +6,7 @@ from flask_socketio import SocketIO, emit
 # Recomendado: Defina o SECRET_KEY com uma variável de ambiente (melhor seguranca)
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'seu_segredo_padrao_muito_longo') 
-socketio = SocketIO(app) # Não precisa de argumentos aqui, o servidor WSGI cuidará disso
+socketio = SocketIO(app, path='/obs/socket.io')
 
 @app.route('/')
 def admin():
