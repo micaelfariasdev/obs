@@ -1,0 +1,43 @@
+<html>
+
+<head></head>
+
+<body>
+    <div id="viewers">—</div>
+    <script>
+        const CLIENT_ID = "2bzjxtqivocapaj24qaizy7zn07jqw";
+        const TOKEN = "2ybazpa23jdqddbrgmhip6rxabq4ar";
+        const USER_LOGIN = "gabepeixe";
+
+        async function getTwitchViewers() {
+            const r = await fetch(`https://api.twitch.tv/helix/streams?user_login=${USER_LOGIN}`, {
+                headers: {
+                    "Client-ID": CLIENT_ID,
+                    "Authorization": `Bearer ${TOKEN}`
+                }
+            });
+            const j = await r.json();
+            if (j.data && j.data.length > 0) {
+                console.log(j.data[0].viewer_count);
+            } else {
+                console.log("Offline ou canal não encontrado");
+            }
+            console.log(j);
+
+            return j.data[0].viewer_count
+        }
+
+        async function atualizar() {
+            const res = await fetch("https://kick.com/current-viewers?ids[]=81318774");
+            const data = await res.json();
+            var kick = data[0]['viewers']
+            var twitch = await getTwitchViewers()
+            document.getElementById("viewers").innerText = 'Kick = ' + kick + ' | Twitch = ' + twitch + ' | ALL = ' + (kick + twitch);
+            console.log('ok', data[0]['viewers'])
+        }
+        setInterval(atualizar, 10000);
+        atualizar();
+    </script>
+</body>
+
+</html>

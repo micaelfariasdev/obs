@@ -2,3 +2,4 @@
 
 # Ativa o ambiente virtual
 . .venv/Scripts/activate
+. venv/bin/activate
